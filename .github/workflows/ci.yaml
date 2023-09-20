@@ -14,7 +14,8 @@ env:
   PRISMA_USERNAME: ${{ secrets.PCC_USER }}
   PRISMA_PASSWORD: ${{ secrets.PCC_PASS }}
   PRISMA_API_URL: ${{ vars.PRISMA_API_URL }}
-  BUILD_DIR: "./updater_image"
+  BUILD_DIR: "."
+  IMAGENAME: "defender"
 
 jobs:
 
@@ -62,8 +63,12 @@ jobs:
       uses: docker/setup-buildx-action@v2
     - name: Login to Prisma Cloud
       run: |
-        TOKEN=TOKEN=`curl -sk -H "Content-Type: application/json" -X POST -d '{"username":"${{ env.PRISMA_USERNAME }}","password":"${{ env.PRISMA_PASSWORD }}"}' https://us-west1.cloud.twistlock.com/us-4-161028595/api/v1/authenticate | jq .token `
-        echo $TOKEN
+        TOKEN=TOKEN=`curl -sk -H "Content-Type: application/json" -X POST -d '{"username":"${{ env.PRISMA_USERNAME }}","password":"${{ env.PRISMA_PASSWORD }}"}' ${{ secrets.PCC_CONSOLE_URL }}/api/v1/authenticate | jq .token `
+    - name: Get image name and make Docker File
+      run: |
+        IMAGE=`curl -sk -H "Authorization: Bearer $TOKEN" ${{ secrets.PCC_CONSOLE_URL }}/api/v1/defenders/image-name | tr -d '"'`
+        echo "FROM $IMAGE" > ./Dockerfile
+        IMAGETAG=`awk -F: '{print $NF}' <<<"$IMAGE"`
     # - name: Login to Docker Hub
     #   uses: docker/login-action@v2
     #   with:
@@ -89,8 +94,8 @@ jobs:
         platforms: linux/amd64,linux/arm64  # Specify the desired platforms
         push: true 
         tags: |
-            ${{env.DOCKER_USERNAME}}/${{env.REPO}}:${{env.BUILD_ID}}
-            ${{env.DOCKER_USERNAME}}/${{env.REPO}}:latest
+            ${{env.DOCKER_USERNAME}}/${{env.IMAGENAME}}:${{env.IMAGETAG}}
+            ${{env.DOCKER_USERNAME}}/${{env.IMAGENAME}}:latest
     # Not needed since it is pushed in the above step
     # - name: Publish the Docker image
     #   run: docker push -a ${{ env.DOCKER_USERNAME }}/${{ env.REPO }}
