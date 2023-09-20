@@ -63,7 +63,7 @@ jobs:
       uses: docker/setup-buildx-action@v2
     - name: Login to Prisma Cloud
       run: |
-        TOKEN=TOKEN=`curl -sk -H "Content-Type: application/json" -X POST -d '{"username":"${{ env.PRISMA_USERNAME }}","password":"${{ env.PRISMA_PASSWORD }}"}' ${{ secrets.PCC_CONSOLE_URL }}/api/v1/authenticate | jq .token `
+        TOKEN=`curl -sk -H "Content-Type: application/json" -X POST -d '{"username":"${{ env.PRISMA_USERNAME }}","password":"${{ env.PRISMA_PASSWORD }}"}' ${{ secrets.PCC_CONSOLE_URL }}/api/v1/authenticate | jq .token `
     - name: Get image name and make Docker File
       run: |
         IMAGE=`curl -sk -H "Authorization: Bearer $TOKEN" ${{ secrets.PCC_CONSOLE_URL }}/api/v1/defenders/image-name | tr -d '"'`
