@@ -1,4 +1,4 @@
-name: Scan and Publish
+name: Pull and Publish
 
 on:
   # push:
