@@ -64,6 +64,7 @@ jobs:
     - name: Login to Prisma Cloud
       run: |
         TOKEN=`curl -sk -H "Content-Type: application/json" -X POST -d '{"username":"${{ env.PRISMA_USERNAME }}","password":"${{ env.PRISMA_PASSWORD }}"}' ${{ secrets.PCC_CONSOLE_URL }}/api/v1/authenticate | jq .token `
+        [[ -n "$TOKEN" ]] 
         echo $TOKEN
     - name: Get image name and make Docker File
       run: |
