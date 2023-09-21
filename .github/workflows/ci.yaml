@@ -66,10 +66,8 @@ jobs:
         [[ -x `which jq` ]] || exit 127
         IMAGE=`curl -sk -H "Authorization: Bearer $TOKEN" ${{ secrets.PCC_CONSOLE_URL }}/api/v1/defenders/image-name | tr -d '"'`
         [[ -n "$IMAGE" ]] || exit 127 
-        echo $IMAGE
         echo "FROM $IMAGE" > ./Dockerfile
-        IMAGETAG=`awk -F: '{print $NF}' <<<"$IMAGE"`
-        echo $IMAGETAG
+        echo "IMAGETAG=`awk -F: '{print $NF}' <<<"$IMAGE"`" >> $GITHUB_ENV
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
