@@ -16,7 +16,7 @@ env:
   PRISMA_API_URL: ${{ vars.PRISMA_API_URL }}
   BUILD_DIR: "."
   IMAGENAME: "defender"
-  ECR_uri: "056823345367.dkr.ecr.us-east-1.amazonaws.com/defender"
+  ECR_uri: "056823345367.dkr.ecr.us-east-1.amazonaws.com"
 
 jobs:
 
@@ -99,8 +99,8 @@ jobs:
         platforms: linux/amd64,linux/arm64  # Specify the desired platforms
         push: true 
         tags: |
-            ${{env.DOCKER_USERNAME}}/${{env.IMAGENAME}}:${{env.IMAGETAG}}
-            ${{env.DOCKER_USERNAME}}/${{env.IMAGENAME}}:latest
+            ${{ env.ECR_uri}}/${{env.IMAGENAME}}:${{env.IMAGETAG}}
+            ${{ env.ECR_uri}}/${{env.IMAGENAME}}:latest
     # Not needed since it is pushed in the above step
     # - name: Publish the Docker image
     #   run: docker push -a ${{ env.DOCKER_USERNAME }}/${{ env.REPO }}
